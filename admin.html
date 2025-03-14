@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <form id="postForm">
+        <label for="postContent">New Post:</label>
+        <textarea id="postContent" required></textarea>
+        <button type="submit">Add Post</button>
+    </form>
+    <form id="noticeForm">
+        <label for="noticeContent">New Notice:</label>
+        <textarea id="noticeContent" required></textarea>
+        <button type="submit">Add Notice</button>
+    </form>
+    <script src="scripts/drive.js"></script>
+    <script>
+        const FILE_ID = 'https://drive.google.com/file/d/1XGEa9E-Cqs-JwQa1gizOCMecesXnECKh/view';
+
+        // Add a post
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('postContent').value;
+            const data = await fetchData(FILE_ID);
+            if (data) {
+                data.posts.push({ username: 'Admin', content });
+                await updateData(FILE_ID, data);
+                alert('Post added!');
+            }
+        });
+
+        // Add a notice
+        document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('noticeContent').value;
+            const data = await fetchData(FILE_ID);
+            if (data) {
+                data.notices.push({ content });
+                await updateData(FILE_ID, data);
+                alert('Notice added!');
+            }
+        });
+    </script>
+</body>
+</html>

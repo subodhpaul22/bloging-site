@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogging Site - Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <h1>Welcome to the Blogging Site</h1>
+    <div id="posts">
+        <h2>Posts</h2>
+        <!-- Posts will be loaded here -->
+    </div>
+    <div id="notices">
+        <h2>Notices</h2>
+        <!-- Notices will be loaded here -->
+    </div>
+    <a href="admin.html">Admin Panel</a>
+
+    <script>
+        const API_KEY = 'AIzaSyAEBc5aAxuQ96r5JMckp9tFtX1b1okcuLY'; // Replace with your Google API Key
+        const FILE_ID ='https://drive.google.com/file/d/1XGEa9E-Cqs-JwQa1gizOCMecesXnECKh/view'; // Replace with your Google Drive File ID
+
+        // Fetch data from Google Drive
+        async function fetchData() {
+            const url = `https://www.googleapis.com/drive/v3/files/${FILE_ID}?alt=media&key=${API_KEY}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+
+        // Display posts and notices on the homepage
+        async function loadData() {
+            const data = await fetchData();
+            if (data) {
+                const postsContainer = document.getElementById('posts');
+                const noticesContainer = document.getElementById('notices');
+
+                // Clear existing content
+                postsContainer.innerHTML = '<h2>Posts</h2>';
+                noticesContainer.innerHTML = '<h2>Notices</h2>';
+
+                // Display posts
+                if (data.posts && data.posts.length > 0) {
+                    data.posts.forEach(post => {
+                        postsContainer.innerHTML += `
+                            <div class="post">
+                                <p><strong>${post.username}</strong></p>
+                                <p>${post.content}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    postsContainer.innerHTML += `<p>No posts available.</p>`;
+                }
+
+                // Display notices
+                if (data.notices && data.notices.length > 0) {
+                    data.notices.forEach(notice => {
+                        noticesContainer.innerHTML += `
+                            <div class="notice">
+                                <p>${notice.content}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    noticesContainer.innerHTML += `<p>No notices available.</p>`;
+                }
+            } else {
+                console.error('No data found.');
+            }
+        }
+
+        // Load data when the page loads
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
